@@ -42,21 +42,27 @@ contract ERC_721 {
         balances[to] += 1;
         owners[id] = to;
     }
-
-    mapping (address => mapping(address => uint)) public allowances;
+    
+    mapping(address => mapping(address => bool)) public allowancesForAll;
+    mapping(uint => address) public allowances;
 
     function approve(address to, uint id) public {
-        require(ownerOf(id) == msg.sender, "Not the owner of ID");
-        allowances[ownerOf(id)][to] += 1;
+        require(ownerOf(id) == msg.sender, "Not the owner");
+        allowances[id] = to;
+        owners[id] = to;
+    }
+
+    function approveAll(address to, uint id) public {
+        require(ownerOf(id) == msg.sender, "Not the owner");
+        allowancesForAll[ownerOf(id)][to] = true;
         owners[id] = to;
     }
 
     function transferFrom(address from, address to, uint id) public {
-        require(ownerOf(id) == msg.sender, "Not the owner");
+        require(ownerOf(id) == from, "Not the owner");
         require(balanceOf(from) != 0, "Not enough balance");
         balances[from] -= 1;
         balances[to] += 1;
-        allowances[from][ownerOf(id)] -= 1;
         owners[id] = to;
     }
 }
