@@ -37,8 +37,7 @@ contract ERC_721 {
 
     function transfer(address to, uint id) public {
         require(ownerOf(id) == msg.sender, "Not the owner of ID");
-        require(balances[ownerOf(id)] != 0, "Not enough balance");
-        balances[ownerOf(id)] -= 1;
+        balances[msg.sender] -= 1;
         balances[to] += 1;
         owners[id] = to;
     }
@@ -49,18 +48,16 @@ contract ERC_721 {
     function approve(address to, uint id) public {
         require(ownerOf(id) == msg.sender, "Not the owner");
         allowances[id] = to;
-        owners[id] = to;
     }
 
     function approveAll(address to, uint id) public {
         require(ownerOf(id) == msg.sender, "Not the owner");
-        allowancesForAll[ownerOf(id)][to] = true;
-        owners[id] = to;
+        allowancesForAll[msg.sender][to] = true;
     }
 
     function transferFrom(address from, address to, uint id) public {
         require(ownerOf(id) == from, "Not the owner");
-        require(balanceOf(from) != 0, "Not enough balance");
+        require(allowances[id] == msg.sender || allowancesForAll[from][msg.sender] == true, "No allowance");
         balances[from] -= 1;
         balances[to] += 1;
         owners[id] = to;
