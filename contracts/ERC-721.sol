@@ -5,10 +5,12 @@ pragma solidity >=0.7.0 < 0.9.0;
 contract ERC_721 {
     string _name;
     string _symbol;
+    address owner;
 
     constructor(string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
+        owner = msg.sender;
     }
 
     function name() public view returns (string memory) {
@@ -19,10 +21,16 @@ contract ERC_721 {
         return _symbol;
     }
 
+
     mapping(address => uint) public balances;
     mapping(uint => address) public owners;
 
-    function mint(address to, uint id) public {
+    modifier onlyOwner {
+        require(owner == msg.sender, "Not the owner");
+        _;
+    }
+
+    function mint(address to, uint id) public onlyOwner {
        balances[to] += 1;
        owners[id] = to;
     }
@@ -60,8 +68,9 @@ contract ERC_721 {
         require(allowances[id] == msg.sender || allowancesForAll[from][msg.sender] == true, "No allowance");
         balances[from] -= 1;
         balances[to] += 1;
-        if (allowances[id] == msg.sender)
+        if (allowances[id] == msg.sender) {
             delete allowances[id];
+        }
         owners[id] = to;
     }
 }
