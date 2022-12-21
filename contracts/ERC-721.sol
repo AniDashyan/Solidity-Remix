@@ -61,5 +61,5 @@ contract ERC_721 {
         balances[from] -= 1;
         balances[to] += 1;
         owners[id] = to;
-    }
+    } 
 }
