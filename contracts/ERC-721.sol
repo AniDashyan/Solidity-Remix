@@ -60,7 +60,8 @@ contract ERC_721 {
         require(allowances[id] == msg.sender || allowancesForAll[from][msg.sender] == true, "No allowance");
         balances[from] -= 1;
         balances[to] += 1;
-        delete allowances[id];
+        if (allowances[id] == msg.sender)
+            delete allowances[id];
         owners[id] = to;
     }
 }
